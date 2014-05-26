@@ -1,0 +1,221 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>QUnit Example</title>
+		<link rel="stylesheet" href="lib/qunit-1.14.0.css">
+		<script src="twikiToWiki.js"></script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<script src="lib/qunit-1.14.0.js"></script>
+		<script type="text/javascript">
+			var t2w = TWIKITOWIKI
+			test( "foo test", function() {
+  				equal( t2w.getNumber(2), 2, "Passed!" );
+			});
+			test( "TOC removal", function() {
+  				equal( t2w.translateTwikiToWiki('%TOC%'), "", "Passed!" );
+			});
+			test( "STARTINCLUDE removal", function() {
+  				equal( t2w.translateTwikiToWiki('%STARTINCLUDE%'), "", "Passed!" );
+			});
+			test( "STOPINCLUDE removal", function() {
+  				equal( t2w.translateTwikiToWiki('%STOPINCLUDE%'), "", "Passed!" );
+			});
+			test( "SEARCH removal", function() {
+  				equal( t2w.translateTwikiToWiki('%SEARCH{foo}%'), "", "Passed!" );
+			});
+			test( "META removal", function() {
+  				equal( t2w.translateTwikiToWiki('%META foo'), "", "Passed!" );
+			});
+			test( "div removal", function() {
+  				equal( t2w.translateTwikiToWiki('<div>foo</div>'), "foo", "Passed!" );
+			});
+			test( "noautolink removal", function() {
+  				equal( t2w.translateTwikiToWiki('<noautolink>foo</noautolink>'), "foo", "Passed!" );
+			});
+			test( "test bold", function() {
+  				equal( t2w.translateTwikiToWiki('foo *bold* string'), "foo '''bold''' string", "Passed!" );
+			});
+			test( "test partial bold", function() {
+  				equal( t2w.translateTwikiToWiki('*foo* bar *baz*'), "'''foo''' bar '''baz'''", "Passed!" );
+			});
+			test( "test full bold", function() {
+  				equal( t2w.translateTwikiToWiki('*foo bar*'), "'''foo bar'''", "Passed!" );
+			});
+			test( "test italic bold", function() {
+  				equal( t2w.translateTwikiToWiki('foo __bold italic__ bar'), "foo ''<b>bold italic</b>'' bar", "Passed!" );
+			});
+			test( "test italic bold", function() {
+  				equal( t2w.translateTwikiToWiki('foo __bold italic__ bar'), "foo ''<b>bold italic</b>'' bar", "Passed!" );
+			});
+			test( "test italic", function() {
+  				equal( t2w.translateTwikiToWiki('foo _italic_ bar'), "foo ''italic'' bar", "Passed!" );
+			});
+			test( "test_monospaced_bold", function() {
+  				equal( t2w.translateTwikiToWiki('foo ==monospaced bold== bar'), "foo '''<tt>monospaced bold</tt>''' bar", "Passed!" );
+			});
+			test( "test_monospaced", function() {
+  				equal( t2w.translateTwikiToWiki('foo =monospaced= bar'), "foo <tt>monospaced</tt> bar", "Passed!" );
+			});
+
+			test( "test_h6", function() {
+  				equal( t2w.translateTwikiToWiki('---++++++ foo'), "====== foo ======", "Passed!" );
+			});
+			test( "test_h5", function() {
+  				equal( t2w.translateTwikiToWiki('---+++++ foo'), "===== foo =====", "Passed!" );
+			});
+			test( "test_h4", function() {
+  				equal( t2w.translateTwikiToWiki('---++++ foo'), "==== foo ====", "Passed!" );
+			});
+			test( "test_h3", function() {
+  				equal( t2w.translateTwikiToWiki('---+++ foo'), "=== foo ===", "Passed!" );
+			});
+			test( "test_h2", function() {
+  				equal( t2w.translateTwikiToWiki('---++ foo'), "== foo ==", "Passed!" );
+			});
+			test( "test_h2_malformed", function() {
+  				equal( t2w.translateTwikiToWiki('----++ foo (misformed)'), "== foo (misformed) ==", "Passed!" );
+			});
+			test( "test_h1", function() {
+  				equal( t2w.translateTwikiToWiki('---+ foo'), "= foo =", "Passed!" );
+			});
+			test( "test_h1_notoc", function() {
+  				equal( t2w.translateTwikiToWiki('---+!! foo'), "= foo =", "Passed!" );
+			});
+
+			test( "test_link_external", function() {
+  				equal( t2w.translateTwikiToWiki('link: [[http://foo.bar/][external link]]'), "link: [http://foo.bar/ external link]", "Passed!" );
+			});
+			test( "test_link_external_camel_case_in_desc", function() {
+  				equal( t2w.translateTwikiToWiki('link: [[http://foo.bar/][CamelCase external link]]'), "link: [http://foo.bar/ CamelCase external link]", "Passed!" );
+			});
+			test( "test_link_internal_explicit", function() {
+  				equal( t2w.translateTwikiToWiki('[[Foo]]'), "[[Foo]]", "Passed!" );
+			});
+			test( "test_link_internal_explicit_anchor", function() {
+  				equal( t2w.translateTwikiToWiki('[[Foo#Bar]]'), "[[Foo#Bar]]", "Passed!" );
+			});
+			test( "test_link_internal_explicit_aliased", function() {
+  				equal( t2w.translateTwikiToWiki('[[foo][foo bar]]'), "[[foo | foo bar]]", "Passed!" );
+			});
+			test( "test_link_external_html", function() {
+  				equal( t2w.translateTwikiToWiki('link: <a target="_blank" href="https://www.foo.com">bar</a>'), "link: [https://www.foo.com bar]", "Passed!" );
+			});
+
+			test( "test_bullet1", function() {
+  				equal( t2w.translateTwikiToWiki('   * foo'), "* foo", "Passed!" );
+			});
+			test( "test_bullet1_tab", function() {
+  				equal( t2w.translateTwikiToWiki('\t* foo'), "* foo", "Passed!" );
+			});	
+			test( "test_bullet2", function() {
+  				equal( t2w.translateTwikiToWiki('      * foo'), "** foo", "Passed!" );
+			});	
+			test( "test_bullet1_tab", function() {
+  				equal( t2w.translateTwikiToWiki('\t\t* foo'), "** foo", "Passed!" );
+			});	
+			test( "test_bullet3", function() {
+  				equal( t2w.translateTwikiToWiki('         * foo'), "*** foo", "Passed!" );
+			});	
+			test( "test_bullet3_tab", function() {
+  				equal( t2w.translateTwikiToWiki('\t\t\t* foo'), "*** foo", "Passed!" );
+			});	
+			test( "test_bullet4", function() {
+  				equal( t2w.translateTwikiToWiki('            * foo'), "**** foo", "Passed!" );
+			});	
+			test( "test_bullet5", function() {
+  				equal( t2w.translateTwikiToWiki('               * foo'), "***** foo", "Passed!" );
+			});	
+			test( "test_bullet6", function() {
+  				equal( t2w.translateTwikiToWiki('                  * foo'), "****** foo", "Passed!" );
+			});	
+			test( "test_bullet7", function() {
+  				equal( t2w.translateTwikiToWiki('                     * foo'), "******* foo", "Passed!" );
+			});	
+			test( "test_bullet8", function() {
+  				equal( t2w.translateTwikiToWiki('                        * foo'), "******** foo", "Passed!" );
+			});	
+			test( "test_bullet9", function() {
+  				equal( t2w.translateTwikiToWiki('                           * foo'), "********* foo", "Passed!" );
+			});	
+			test( "test_bullet10", function() {
+  				equal( t2w.translateTwikiToWiki('                              * foo'), "********** foo", "Passed!" );
+			});
+
+			test( "test_numbered1", function() {
+  				equal( t2w.translateTwikiToWiki('   1. foo'), "# foo", "Passed!" );
+			});
+			test( "test_numbered1_tab", function() {
+  				equal( t2w.translateTwikiToWiki('\t1. foo'), "# foo", "Passed!" );
+			});
+			test( "test_numbered2", function() {
+  				equal( t2w.translateTwikiToWiki('      1. foo'), "## foo", "Passed!" );
+			});
+			test( "test_numbered2_tab", function() {
+  				equal( t2w.translateTwikiToWiki('\t\t1 foo'), "## foo", "Passed!" );
+			});
+			test( "test_numbered3", function() {
+  				equal( t2w.translateTwikiToWiki('         1. foo'), "### foo", "Passed!" );
+			});
+			test( "test_numbered3_tab", function() {
+  				equal( t2w.translateTwikiToWiki('\t\t\t1 foo'), "### foo", "Passed!" );
+			});
+			test( "test_numbered4", function() {
+  				equal( t2w.translateTwikiToWiki('            1. foo'), "#### foo", "Passed!" );
+			});
+			test( "test_numbered5", function() {
+  				equal( t2w.translateTwikiToWiki('               1. foo'), "##### foo", "Passed!" );
+			});
+			test( "test_numbered6", function() {
+  				equal( t2w.translateTwikiToWiki('                  1. foo'), "###### foo", "Passed!" );
+			});
+			test( "test_numbered7", function() {
+  				equal( t2w.translateTwikiToWiki('                     1. foo'), "####### foo", "Passed!" );
+			});
+			test( "test_numbered8", function() {
+  				equal( t2w.translateTwikiToWiki('                        1. foo'), "######## foo", "Passed!" );
+			});
+			test( "test_numbered9", function() {
+  				equal( t2w.translateTwikiToWiki('                           1. foo'), "######### foo", "Passed!" );
+			});
+			test( "test_numbered10", function() {
+  				equal( t2w.translateTwikiToWiki('                              1. foo'), "########## foo", "Passed!" );
+			});
+
+
+			test( "test_verbatim_pre", function() {
+  				equal( t2w.translateTwikiToWiki('<verbatim>foo</verbatim>'), "<pre>foo</pre>", "Passed!" );
+			});
+			test( "test_verbatim_pre_opening", function() {
+  				equal( t2w.translateTwikiToWiki('<verbatim>foo'), "<pre>foo", "Passed!" );
+			});
+			test( "test_verbatim_pre_closing", function() {
+  				equal( t2w.translateTwikiToWiki('foo</verbatim>'), "foo</pre>", "Passed!" );
+			});
+			test( "test_definition_term", function() {
+  				equal( t2w.translateTwikiToWiki('   $ foo: bar'), "; foo : bar", "Passed!" );
+			});
+			test( "test_upper_case_text", function() {
+  				equal( t2w.translateTwikiToWiki('FOO bar BAZ'), "FOO bar BAZ", "Passed!" );
+			});
+			/*test( "test_upper_case_text", function() {
+  				equal( t2w.translateTwikiToWiki(" \
+| *L1* | *C* | *R* | \
+| A2 |  B2  |  C2 | \
+| A3 |  B3  |  C3 |"), "| '''L1''' | '''C* | *R''' |\n| A2 |  B2  |  C2 |\n| A3 |  B3  |  C3 |", "Passed!" );
+			});*/
+			test( "test_nowikiword", function() {
+  				equal( t2w.translateTwikiToWiki('foo !bar'), "foo bar", "Passed!" );
+			});
+			test( "test_searchmacro", function() {
+  				equal( t2w.translateTwikiToWiki("%SEARCH{\".*\" web=\"%INCLUDINGWEB%\" regex=\"on\" nosearch=\"on\" nototal=\"on\" order=\"modified\" limit=\"20\" reverse=\"on\"  format=\"| [[$topic][$topic(25, ...)]] | $wikiusername  | $date |\" }%"), "", "Passed!" );
+			});
+			test( "test_camelcaseemail", function() {
+  				equal( t2w.translateTwikiToWiki('foo.bar@baz.com email'), "foo.bar@baz.com email", "Passed!" );
+			});
+
+		</script>
+	</body>
+</html>
